@@ -38,7 +38,7 @@ function garchFit(tm::Timematr)
     end
     
     min_objective!(opt, objFun)
-    xtol_rel!(opt, 1e-6)
+    xtol_rel!(opt, 1e-2)
     
     ## inequality constraints
     ineqConstraint(params, g) = params[3] + params[4] - 1

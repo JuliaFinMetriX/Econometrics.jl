@@ -8,52 +8,11 @@ using Distributions
 
 tm = readTimedata("/home/chris/research/asset_mgmt/data/datesLogRet.csv")
 
-## functions to indentify lowest and highest values by boolean
-function islowest(x::Array{Float64, 1}, n::Integer = 1)
-    nVals = length(x)
-    inds = sortperm(x)
-    logics = falses(nVals)
-    logics[inds[1:n]] = true
-    return logics
-end
-
-function ishighest(x::Array{Float64, 1}, n::Integer = 1)
-    nVals = length(x)
-    inds = sortperm(x, rev=true)
-    logics = falses(nVals)
-    logics[inds[1:n]] = true
-    return logics
-end
-
 ## get 5 lowest minima stocks
 mapFunc(x) = minimum(x)
 critFunc(x) = islowest(x, 5)
 mostNegativeReturns = TimeData.getVars(tm, mapFunc, critFunc)
 
-#########################################
-## normalized 120 day price evolutions ##
-#########################################
-
-## plot 120 day normalized log-prices each 60 days
-horizon = 120
-steps = 60
-nObs = size(tm, 1)
-
-normPrices = cumsum(tm[1:120, :])
-plot(normPrices)
-ylim(-200, 200)
-title(TimeData.dates(tm)[1])
-file("./pics/normPrices.png")
-
-for ii=1:steps:(nObs-horizon)
-    normPrices = cumsum(tm[ii:(ii+horizon), :])
-    TimeData.plot(normPrices)
-    ylim(-200, 200)
-    periodBegin = string(TimeData.dates(tm)[ii])
-    title(periodBegin)
-    fname = string("./pics/normPrices", ii, ".png")
-    file(fname)
-end
 
 #########################
 ## get moving averages ##
@@ -163,7 +122,6 @@ ylim(-0.2, 1)
 ## GARCH ##
 ###########
 
-using GARCH
 testData = tm[1]
 
 ## load econometrics library
@@ -188,27 +146,129 @@ params2 = [ 0.056642,
            0.0485675,
            1.01403]
 
-Econometrics.garchLLH(params1, core(testData))
+Econometrics.garchLLH(paramsHat, core(testData))
 Econometrics.garchLLH(params2, core(testData))
 
 d = Normal(0, sigma)
 nllh2 = -sum(log(pdf(d, core(testData))))
 
-function objFun(x::Vector, grad::Vector)
-    ## objective function calculating portfolio variance
-    if length(grad) > 0
-        ## no partial derivative given
-    end
-    
-    ## calculate portfolio variance
-    nllh = Econometrics.garchLLH(initVal, core(testData))
-    return nllh
-end
-
-
 kk = x -> Econometrics.garchLLH(x, core(testData))
 kk(initVal)
+
+garchObj = garchFit(core(tm[1])[:])
+sigs = garchObj.sigma
+plot(sigs)
 
 ####################
 ## garch packages ##
 ####################
+
+using GARCH
+
+(nObs, nAss) = size(tm)
+
+## get volatilities for each asset
+allSigmas = ones(nObs, nAss)
+for ii=1:nAss
+    print(ii)
+    garchObj = garchFit(core(tm[ii])[:])
+    allSigmas[:, ii] = garchObj.sigma
+end
+
+filtered = Timematr(core(tm)./allSigmas, dates(tm))
+writeTimedata("/home/chris/research/asset_mgmt/data/filteredLogRet.csv",
+              filtered) 
+
+
+###########
+## ranks ##
+###########
+
+function ranks(x::Array)
+    ## transform observations to unit interval
+    nObs = size(x, 1)
+    nVars = size(x, 2)
+
+    y = ones(nObs, nVars)
+    vals = ([1:nObs])/(nObs + 1)
+    
+    for ii=1:nVars
+        idx = sortperm(x[:, ii])
+        y[idx, ii] = vals[:]
+    end
+    return y
+end
+
+function ranks(tm::Timematr)
+    y = ranks(core(tm))
+    return Timecop(y, dates(tm))
+end
+    
+import Winston.plot
+function plot(tc::Timecop)
+    ## plot bi-variate copula data
+    if size(tc, 2) != 2
+        error("copula plot is defined for bivariate data only")
+    end
+
+    vals = core(tc)
+    ## aspect ratio
+    p = FramedPlot(
+                   aspect_ratio=1,
+                   xrange=(0,1),
+                   yrange=(0,1))
+    plot(vals[:, 1], vals[:, 2], ".b")
+end
+
+
+## get ranks
+U = ranks(filtered)
+
+Ubiv = U[:, 1:2]
+
+plot(Ubiv)
+
+##############################################################
+## normalized 120 day price evolutions for filtered returns ##
+##############################################################
+
+filtered = readTimedata("/home/chris/research/asset_mgmt/data/filteredLogRet.csv")
+
+## plot 120 day normalized log-prices each 60 days
+horizon = 120
+steps = 60
+nObs = size(filtered, 1)
+
+normPrices = cumsum(filtered[1:120, :], 1)
+p = plotNormalizedPrices(normPrices, string(dates(filtered)[1]))
+file(p, "./pics/normPrices.png")
+
+for ii=1:steps:(nObs-horizon)
+    normPrices = cumsum(filtered[ii:(ii+horizon), :], 1)
+    periodBegin = string(TimeData.dates(filtered)[ii])    
+    p = plotNormalizedPrices(normPrices, periodBegin)
+    fname = string("./pics/normPrices_ft", ii, ".png")
+    file(p, fname)
+end
+
+
+## plot sigma vs filtered series in ranks
+allSigmas = core(tm)./core(filtered)
+
+volCorr = ones(size(tm, 2))
+for ii = 1:size(tm, 2)
+    uVals = ranks([core(filtered[ii]) allSigmas[:, ii]])
+    ## tcVola = Timecop(uVals)
+    volCorr[ii] = cor(uVals)[1, 2]
+end
+
+plot(volCorr)
+
+plot(tcVola)
+
+ p = FramedPlot(
+         title="Title",
+         xlabel="X axis",
+         ylabel="Y axis")
+ add(p, Histogram(hist(volCorr)...))
+

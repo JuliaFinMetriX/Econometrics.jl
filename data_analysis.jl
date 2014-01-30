@@ -69,10 +69,10 @@ autocorr_red!(simVals[:, 1])
 ## correlations for all frequencies ##
 ######################################
 
-maxAggregation = 100
+maxAggregation = 50
 
-include("/home/chris/research/julia/TimeData/src/TimeData.jl")
-tm = readTimedata("/home/chris/research/asset_mgmt/data/datesLogRet.csv")
+## include("/home/chris/research/julia/TimeData/src/TimeData.jl")
+## tm = readTimedata("/home/chris/research/asset_mgmt/data/datesLogRet.csv")
 nObs = size(tm, 2)
 
 frequ = 50
@@ -87,7 +87,7 @@ for ii=1:20
         end
     end
     println("first: ", x, " , second: ", y)
-    a = TimeData.frequCorrPlot(tm, x, y, frequ)
+    a = Econometrics.frequCorrPlot(tm, x, y, frequ)
     plot(a[:, 1], a[:, 2], "+b")
     ylim(-0.2, 1)
     ## p = FramedPlot(

@@ -49,7 +49,7 @@ function aggregate(tm::Timematr, by::Integer = 20,
 
     ## get aggregation intervals and last interval dates
     aggrIndices = getLastPeriodIndices(nObs, by)
-    aggrDates = dates(tm)[aggrIndices]
+    aggrDates = idx(tm)[aggrIndices]
 
     aggrRets = ones(nAggrRets, nAss)
     for ii=1:nAggrRets

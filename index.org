@@ -1,0 +1,49 @@
+#+TITLE: Econometrics.jl
+#+OPTIONS: eval:never-export
+#+PROPERTY: exports both
+#+PROPERTY: results silent
+#+PROPERTY: session *julia-docs*
+#+OPTIONS: tangle:doctests.jl
+#+OPTIONS: author:nil
+#+OPTIONS: title:nil
+#+OPTIONS: email:nil
+#+OPTIONS: timestamp:nil
+#+OPTIONS: toc:yes
+#+OPTIONS: html-doctype:html5
+
+#+HTML_HEAD: <meta charset='utf-8'>
+#+HTML_HEAD: <meta http-equiv="X-UA-Compatible" content="chrome=1">
+#+HTML_HEAD: <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+#+HTML_HEAD: <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+#+HTML_HEAD_EXTRA: <header>
+#+HTML_HEAD_EXTRA:  <div class="inner">
+#+HTML_HEAD_EXTRA:         <h1>Econometrics.jl</h1>
+#+HTML_HEAD_EXTRA:         <h2>Econometrics package for Julia language</h2>
+#+HTML_HEAD_EXTRA:         <a href="https://github.com/JuliaFinMetriX/Econometrics.jl" class="button"><small>View project on</small>GitHub</a>
+#+HTML_HEAD_EXTRA:       </div>
+#+HTML_HEAD_EXTRA:     </header>
+
+
+#+HTML_HEAD_EXTRA:     <div id="content-wrapper">
+#+HTML_HEAD_EXTRA:       <div class="inner clearfix">
+#+HTML_HEAD_EXTRA: <aside id="sidebar">
+#+HTML_HEAD_EXTRA:    <a href="https://github.com/JuliaFinMetriX/Econometrics.jl/zipball/master" class="button">
+#+HTML_HEAD_EXTRA:      <small>Download</small>
+#+HTML_HEAD_EXTRA:      .zip file
+#+HTML_HEAD_EXTRA:    </a>
+#+HTML_HEAD_EXTRA:    <a href="https://github.com/JuliaFinMetriX/Econometrics.jl/tarball/master" class="button">
+#+HTML_HEAD_EXTRA:      <small>Download</small>
+#+HTML_HEAD_EXTRA:      .tar.gz file
+#+HTML_HEAD_EXTRA:    </a>
+#+HTML_HEAD_EXTRA:     <p class="repo-owner"><a href="https://github.com/JuliaFinMetriX/Econometrics.jl"></a> maintained by <a href="https://github.com/cgroll">cgroll</a>.</p>
+#+HTML_HEAD_EXTRA:  </aside>
+
+#+HTML_HEAD_EXTRA:         <section id="main-content">
+#+HTML_HEAD_EXTRA:           <div>
+
+Site is yet to come!
+

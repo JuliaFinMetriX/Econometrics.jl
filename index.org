@@ -31,6 +31,9 @@
 #+HTML_HEAD_EXTRA:     <div id="content-wrapper">
 #+HTML_HEAD_EXTRA:       <div class="inner clearfix">
 #+HTML_HEAD_EXTRA: <aside id="sidebar">
+#+HTML_HEAD_EXTRA:    <a href="https://github.com/JuliaFinMetriX">
+#+HTML_HEAD_EXTRA:    <img src="./logo.png" width="200" height="114">
+#+HTML_HEAD_EXTRA:    </a>
 #+HTML_HEAD_EXTRA:    <a href="https://github.com/JuliaFinMetriX/Econometrics.jl/zipball/master" class="button">
 #+HTML_HEAD_EXTRA:      <small>Download</small>
 #+HTML_HEAD_EXTRA:      .zip file
@@ -45,5 +48,7 @@
 #+HTML_HEAD_EXTRA:         <section id="main-content">
 #+HTML_HEAD_EXTRA:           <div>
 
-Site is yet to come!
+A thorough documentation of Econometrics.jl is yet to be created.
+Still, you can find an overview of the most important functions at the
+[[http://juliafinmetrix.readthedocs.org/en/latest/index.html][JuliaFinMetriX standard library documentation]]. 
 

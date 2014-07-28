@@ -33,7 +33,6 @@ end
 
 function price2ret(tm::AbstractTimematr; log = T)
     ## get discrete net returns from historic prices
-
     if log
         rets = tm[2:end, :] .- tm[1:(end-1), :]
     else

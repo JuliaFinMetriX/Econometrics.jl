@@ -2,10 +2,56 @@
 ## logarithmic / discrete return transformations ##
 ###################################################
 
-disc2log(x) = log(x+1)
-disc2logPercent(x) = log(x/100+1)*100
-log2disc(x) = exp(x) - 1
-log2discPercent(x) = (exp(x/100) - 1)*100
+function disc2log(tn::AbstractTimenum; percent = F)
+    ## discrete net return to logarithmic return
+    if percent
+        rets = log(tn./100 .+ 1).*100
+    else
+        rets = log(tn .+ 1)
+    end
+    return rets
+end
+
+function log2disc(tn::AbstractTimenum; percent = F)
+    ## logarithmic return to discrete net return
+    if percent
+        rets = (exp(tn./100) .- 1).*100
+    else
+        rets = exp(tn) .- 1
+    end
+    return rets
+end
+
+################################
+## return / price conversions ##
+################################
+
+function price2ret(tn::AbstractTimenum; log = T)
+    ## get discrete net returns from historic prices
+
+end
+
+function price2ret(tm::AbstractTimematr; log = T)
+    ## get discrete net returns from historic prices
+
+    if log
+        rets = tm[2:end, :] .- tm[1:(end-1), :]
+    else
+        rets = (tm[2:end, :] .- tm[1:(end-1), :]) ./ tm[1:(end-1), :]
+    end
+    return rets
+end
+
+function ret2price(tm::AbstractTimematr; log = T)
+    ## get discrete net returns from historic prices
+    if log
+        prices = cumsum(tm, 1)
+    else
+        prices = cumprod(tm .+ 1, 1)
+    end
+    return prices
+end
+
 
 #####################################
 ## low-level aggregation functions ##

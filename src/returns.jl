@@ -2,7 +2,7 @@
 ## logarithmic / discrete return transformations ##
 ###################################################
 
-function disc2log(tn::AbstractTimenum; percent = F)
+function disc2log(tn::AbstractTimenum; percent = false)
     ## discrete net return to logarithmic return
     if percent
         rets = log(tn./100 .+ 1).*100
@@ -12,7 +12,7 @@ function disc2log(tn::AbstractTimenum; percent = F)
     return rets
 end
 
-function log2disc(tn::AbstractTimenum; percent = F)
+function log2disc(tn::AbstractTimenum; percent = false)
     ## logarithmic return to discrete net return
     if percent
         rets = (exp(tn./100) .- 1).*100
@@ -26,12 +26,30 @@ end
 ## return / price conversions ##
 ################################
 
-function price2ret(tn::AbstractTimenum; log = T)
-    ## get discrete net returns from historic prices
+function price2ret(prices::AbstractTimenum; log = true)
+    ## get discrete net returns from historic prices as Timenum
 
+    ## create price series without NAs
+    pricesNoNA = Timenum(deepcopy(prices.vals), idx(prices))
+    imputePreviousObs!(pricesNoNA)
+
+
+    ## get returns through method of Timematr
+    logRet = convert(Timematr, pricesNoNA) |>
+    x -> price2ret(x, log = log) |>
+    x -> convert(Timenum, x)
+    
+    for ii=1:size(logRet, 1)
+        for jj=1:size(logRet, 2)
+            if isna(prices.vals[ii + 1, jj])
+                setNA!(logRet, ii, jj)
+            end
+        end
+    end
+    return logRet                       # Timenum
 end
 
-function price2ret(tm::AbstractTimematr; log = T)
+function price2ret(tm::AbstractTimematr; log = true)
     ## get discrete net returns from historic prices
     if log
         rets = tm[2:end, :] .- tm[1:(end-1), :]
@@ -41,7 +59,7 @@ function price2ret(tm::AbstractTimematr; log = T)
     return rets
 end
 
-function ret2price(tm::AbstractTimematr; log = T)
+function ret2price(tm::AbstractTimematr; log = true)
     ## get discrete net returns from historic prices
     if log
         prices = cumsum(tm, 1)
@@ -51,6 +69,39 @@ function ret2price(tm::AbstractTimematr; log = T)
     return prices
 end
 
+function ret2price(tm::AbstractTimematr,
+                   initPrices::AbstractTimenum; log = true)
+    ## get discrete net returns from historic prices
+    if isa(Timenum, initPrices)
+        initPrices = convert(Timematr, initPrices)
+    end
+    
+    if log
+        prices = cumsum(tm, 1)
+    else
+        prices = cumprod(tm .+ 1, 1)
+    end
+    return prices
+end
+
+
+###########################
+## imputing missing data ##
+###########################
+
+function imputePreviousObs!(td::AbstractTimedata)
+    ## replace NA by previous observation
+    
+    nObs = size(td, 1)
+    for singleCol in eachcol(td.vals)
+        for jj=1:nObs
+            if isna(singleCol[2][jj])
+                singleCol[2][jj] = singleCol[2][jj-1]
+            end
+        end
+    end
+    return td
+end
 
 #####################################
 ## low-level aggregation functions ##
@@ -88,14 +139,14 @@ function aggregate(tm::Timematr, by::Integer = 20,
     
     (nObs, nAss) = size(tm)
     vals = core(tm)
-
+    
     ## how many aggregations
     nAggrRets = div(nObs, by)
-
+    
     ## get aggregation intervals and last interval dates
     aggrIndices = getLastPeriodIndices(nObs, by)
     aggrDates = idx(tm)[aggrIndices]
-
+    
     aggrRets = ones(nAggrRets, nAss)
     for ii=1:nAggrRets
         startInd = aggrIndices[ii]-by+1
@@ -123,7 +174,7 @@ function frequCorrPlot(tm::Timematr, ind1::Integer = 1,
     ## select data
     data = tm[:, [ind1, ind2]]
     nObs = size(data, 1)
-
+    
     corrs = Float64[]
     frequencies = Float64[]
     for frequ=1:maxFreq
@@ -141,9 +192,9 @@ function frequCorrPlot(tm::Timematr, ind1::Integer = 1,
             push!(frequencies, frequ)
             push!(corrs, corr)
         end
-
+        
         ## push!(a, [frequ*ones(nPhases) corrsCurrentFrequ])
     end
-
+    
     return [frequencies corrs]
 end

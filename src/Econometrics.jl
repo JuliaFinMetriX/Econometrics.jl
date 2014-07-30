@@ -2,11 +2,13 @@ module Econometrics
 
 ## list packages whos namespace is used
 using TimeData
+using DataFrames
 ## using Winston
 ## using NLopt
 
 export                                  # important functions
 disc2log,
+imputePreviousObs!,
 log2disc,
 price2ret,
 ret2price

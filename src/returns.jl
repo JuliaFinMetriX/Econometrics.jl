@@ -60,7 +60,7 @@ function price2ret(tm::AbstractTimematr; log = true)
 end
 
 function ret2price(tm::AbstractTimematr; log = true)
-    ## get discrete net returns from historic prices
+    ## get normed prices from returns
     if log
         prices = cumsum(tm, 1)
     else
@@ -68,6 +68,38 @@ function ret2price(tm::AbstractTimematr; log = true)
     end
     return prices
 end
+
+function ret2price(tn::AbstractTimenum; log = true)
+    ## get normed prices from returns
+    tm = Timematr(deepcopy(tn.vals), tn.idx)
+    
+    (nObs, nVars) = size(tm)
+    rowInd = Array(Int, 0)
+    colInd = Array(Int, 0)
+    for ii=1:nVars
+        for jj=1:nObs
+            if isna(tm2.vals[jj, ii])
+                tm.vals[jj, ii] = 0
+                push!(rowInd, jj)
+                push!(colInd, ii)
+            end
+        end
+    end
+        
+    if log
+        prices = cumsum(tm, 1)
+    else
+        prices = cumprod(tm .+ 1, 1)
+    end
+
+    pricesTn = convert(Timenum, prices) # convert to Timenum
+
+    for eachna=1:length(rowInd)
+        setNA!(pricesTn, rowInd(eachna), colInd(eachna))
+    end
+    return pricesTn
+end
+
 
 function ret2price(tm::AbstractTimematr,
                    initPrices::AbstractTimenum; log = true)

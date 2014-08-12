@@ -3,6 +3,7 @@ module Econometrics
 ## list packages whos namespace is used
 using TimeData
 using DataFrames
+using Dates
 ## using Winston
 ## using NLopt
 

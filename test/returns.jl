@@ -1,32 +1,101 @@
-module TestAbstractFuncs
+module TestReturns
 
 using Base.Test
 using TimeData
-using Distributions
+using Econometrics
 
-println("\n Running financial functions tests\n")
+println("\n Running return function tests\n")
 
-d = Normal(0.02, 1.6)
-simRetsPercent = rand(d, 10, 2)
-simRets = simRetsPercent / 100
+#########################
+## disc2log / log2disc ##
+#########################
 
-@test_approx_eq aggrLogPercent(simRetsPercent) aggrLogPercent(simRets)*100
-@test_approx_eq aggrDiscrPercent(simRetsPercent) aggrDiscr(simRetsPercent/100)*100
+## percentage returns
+##-------------------
+
+ret = TimeData.Timematr(DataFrame(returns = [2, 3]))
+ret2 = Econometrics.log2disc(Econometrics.disc2log(ret, percent=true),
+                             percent=true)
+
+@test_approx_eq TimeData.core(ret) TimeData.core(ret2)
+
+## no percentage returns
+##----------------------
+
+ret = TimeData.Timematr(DataFrame(returns = [0.2, 0.3]))
+ret2 = Econometrics.log2disc(Econometrics.disc2log(ret, percent=false),
+                             percent=false)
+
+@test_approx_eq TimeData.core(ret) TimeData.core(ret2)
 
 
-###################################################
-## logarithmic / discrete return transformations ##
-###################################################
+###############
+## price2ret ##
+###############
 
-@test_approx_eq log2disc(disc2log(0.04)) 0.04
-@test_approx_eq disc2log(log2disc(0.04)) 0.04
-@test_approx_eq log2discPercent(disc2logPercent(4)) 4
-@test_approx_eq disc2logPercent(log2discPercent(4)) 4
+prices = TimeData.testcase(TimeData.Timenum, 2)
+logRet = Econometrics.price2ret(prices, log = true)
 
-## test aggregations
-@test_approx_eq aggrLog(simRets) disc2log(aggrDiscr(log2disc(simRets)))
+## manually determine expected result
+##-----------------------------------
 
-## test aggregations with percentage returns
-@test_approx_eq aggrLog(simRetsPercent) disc2logPercent(aggrDiscrPercent(log2discPercent(simRetsPercent)))
+idxs = prices.idx[2:end]
+expTn = TimeData.Timenum(DataFrame(prices1 = @data([NA, 20, 30, 30]),
+                                   prices2 = @data([10, NA, 10, NA])),
+                         idxs)
+
+## test
+@test isequal(logRet, expTn)
+
+## test Timematr
+##--------------
+
+prices = TimeData.testcase(TimeData.Timematr, 1)
+logRet = Econometrics.price2ret(prices, log = true)
+
+idxs = prices.idx[2:end]
+expTn = TimeData.Timematr(DataFrame(prices1 = [20, -10, 60],
+                                    prices2 = [10, -20, 30]),
+                          idxs)
+
+## test
+@test isequal(logRet, expTn)
+
+
+## same for discrete returns
+##--------------------------
+
+prices = TimeData.testcase(TimeData.Timenum, 2)
+discRet = Econometrics.price2ret(prices, log = false)
+
+@test_approx_eq ((140-120) / 120) TimeData.core(discRet[2, 1])
+@test_approx_eq ((120-110) / 110) TimeData.core(discRet[1, 2])
+@test isna(TimeData.core(discRet[2, 2])[1])
+
+
+###############
+## ret2price ##
+###############
+
+## for DataArrays
+##---------------
+
+## price2ret and ret2price must be inverse
+##----------------------------------------
+
+daRets = @data([NA, NA, NA, 3, 4, 6])
+prices = Econometrics.ret2price(daRets, log = true)
+pricesTn = TimeData.Timenum(DataFrame(prices1 = prices))
+tnRets = Econometrics.price2ret(pricesTn)
+@test isequal(daRets, tnRets.vals[1])
+
+
+daRets = @data([NA, NA, NA, 3, 4, 6])./100
+prices = Econometrics.ret2price(daRets, log = false)
+pricesTn = TimeData.Timenum(DataFrame(prices1 = prices))
+tnRets = Econometrics.price2ret(pricesTn, log = false)
+@test_approx_eq array(daRets[4:end]) array(tnRets.vals[1][4:end])
+
+
 
 end

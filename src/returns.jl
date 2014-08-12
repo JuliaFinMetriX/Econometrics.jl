@@ -116,6 +116,33 @@ function ret2price(tm::AbstractTimematr,
     return prices
 end
 
+function ret2price(tm)
+## get returns
+logRet = Econometrics.price2ret(prices)
+
+## manipulate copy of returns
+logRet2 = deepcopy(logRet)
+TimeData.impute!(logRet2, "zero")
+logRetTm = convert(TimeData.Timematr, logRet2)
+
+## get prices
+cumPrices = TimeData.cumsum(logRetTm, 1)
+cumPrices = convert(TimeData.Timenum, cumPrices)
+
+## insert NAs again
+(rowInds, colInds) = TimeData.find2sub(isna, logRet)
+nNAs = length(rowInds)
+for ii=1:nNAs
+    TimeData.setNA!(cumPrices, rowInds[ii], colInds[ii])
+end
+
+## add initial value
+initPrices = convert(TimeData.Timematr, prices[1, :])
+initPricesMatr = TimeData.asTn(TimeData.core(initPrices), cumPrices)
+
+cumPrices .+ initPricesMatr
+
+end
 
 ###########################
 ## imputing missing data ##
@@ -123,7 +150,7 @@ end
 
 function imputePreviousObs!(td::AbstractTimedata)
     ## replace NA by previous observation
-    
+    error("not working for NAs at first day")
     nObs = size(td, 1)
     for singleCol in eachcol(td.vals)
         for jj=1:nObs

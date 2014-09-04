@@ -36,11 +36,7 @@ function price2ret(prices::DataArray; log = true)
 
     ## create price series with NAs replaced by last value
     pricesNoNA = deepcopy(prices)
-    for ii=1:nNAs
-        if naInds[ii] > 1
-            pricesNoNA[naInds[ii]] = pricesNoNA[naInds[ii] - 1]
-        end
-    end
+    impute!(pricesNoNA, "single last")
 
     ## calculate returns
     if log

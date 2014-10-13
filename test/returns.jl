@@ -6,7 +6,7 @@ using Econometrics
 using DataFrames
 using Dates
 
-println("\n Running return function tests\n")
+## println("\n Running return function tests\n")
 
 #########################
 ## disc2log / log2disc ##

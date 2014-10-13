@@ -22,7 +22,7 @@ ret2price
 ## include("copula.jl")
 ## include("garch.jl")
 include("returns.jl")
-
+include("nchisq.jl")
 
 
 end # module

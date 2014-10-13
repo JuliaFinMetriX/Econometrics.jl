@@ -1,15 +1,19 @@
-module runtests
+module TestEconometrics
 
-using Dates
+using Base.Dates
 using DataFrames
 using DataArrays
 using TimeData
+using Base.Test
 
-tests = ["returns.jl"]
+my_tests = ["returns.jl",
+         "nchisq.jl"]
 
+println("Running tests:")
 
-for t in tests
-    include(string(Pkg.dir("Econometrics"), "/test/", t))
+for my_test in my_tests
+    println(" * $(my_test)")
+    include(my_test)
 end
 
 end

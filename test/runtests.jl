@@ -1,6 +1,6 @@
 module TestEconometrics
 
-using Base.Dates
+using Dates
 using DataFrames
 using DataArrays
 using TimeData

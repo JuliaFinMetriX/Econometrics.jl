@@ -5,9 +5,24 @@ using DataFrames
 using DataArrays
 using TimeData
 using Base.Test
+using Econometrics
 
-my_tests = ["returns.jl",
-         "nchisq.jl"]
+## create test data
+##-----------------
+
+Econometrics.createTestData()
+
+## build R results
+##----------------
+
+rscriptPath = joinpath(Pkg.dir("Econometrics"), "test/data/")
+
+## uncomment the following line if you don't have docker
+#run(`docker run -t --rm -v $rscriptPath:/home/docker/ juliafinmetrix/rfinm_deb bash R CMD BATCH --no-save --no-restore r_results.R`)
+
+my_tests = ["cir.jl",
+            "returns.jl",
+            "nchisq.jl"]
 
 println("Running tests:")
 

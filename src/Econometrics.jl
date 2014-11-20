@@ -5,17 +5,20 @@ using TimeData
 using DataFrames
 using Dates
 using GLM
+using EconDatasets
 ## using Winston
 ## using NLopt
 
 ## required for testing
-## using EconDatasets
 ## using matlabdataloading
 
 export                                  # important functions
+CIR,
 cirOls,
 cirNllh,
+cirNllhx,
 disc2log,
+getParams,
 imputePreviousObs!,
 log2disc,
 price2ret,

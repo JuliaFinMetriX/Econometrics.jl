@@ -5,7 +5,12 @@ using DataFrames
 using DataArrays
 using TimeData
 using Base.Test
-using Econometrics
+using EconDatasets
+using TimeData
+
+#######################################
+## create input and output test data ##
+#######################################
 
 ## create test data
 ##-----------------
@@ -19,6 +24,15 @@ rscriptPath = joinpath(Pkg.dir("Econometrics"), "test/data/")
 
 ## uncomment the following line if you don't have docker
 #run(`docker run -t --rm -v $rscriptPath:/home/docker/ juliafinmetrix/rfinm_deb bash R CMD BATCH --no-save --no-restore r_results.R`)
+
+## build MATLAB results
+##---------------------
+
+# add MATLAB BATCH job
+
+###############
+## run tests ##
+###############
 
 my_tests = ["cir.jl",
             "returns.jl",

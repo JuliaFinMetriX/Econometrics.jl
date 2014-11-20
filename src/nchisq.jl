@@ -1,4 +1,4 @@
-_jl_libRmath = dlopen("libRmath")
+_jl_libRmath = dlopen("libRmath-julia")
 
 ## r function signatures:
 ## dchisq(x, df, ncp = 0, log = FALSE)

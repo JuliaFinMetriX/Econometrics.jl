@@ -10,7 +10,7 @@ using EconDatasets
 ## using NLopt
 
 ## required for testing
-## using matlabdataloading
+## using MAT
 
 export                                  # important functions
 CIR,

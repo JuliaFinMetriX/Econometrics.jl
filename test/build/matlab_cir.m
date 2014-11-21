@@ -6,7 +6,7 @@ addpath('/home/chris/research/julia/Econometrics/test/build/mat_help_funcs/')
 addpath('/home/chris/research/matlab/kladivko_cir_ptc07/')
 
 %% import data
-fname = '/home/chris/research/julia/Econometrics/test/data/intRates.csv';
+fname = '/home/chris/research/julia/Econometrics/test/data/no_git_intRates.csv';
 [idx1,Yraw] = importTestdata(fname);
 
 % eliminate missing values
@@ -30,7 +30,7 @@ llh3 = CIRobjective1(params3, cirMod);
 
 llhs = [llh1 llh2 llh3];
 
-datName = '/home/chris/research/julia/Econometrics/test/data/matlab_llhs.csv';
+datName = '/home/chris/research/julia/Econometrics/test/data/matlab_cir_llhs.csv';
 csvwrite(datName, llhs);
 
 %% maximum-likelihood estimation

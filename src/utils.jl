@@ -36,6 +36,6 @@ function createTestData()
     names!(intData.vals, [:Y1])
 
     # save subset as test data to make it available to R
-    fname = joinpath(Pkg.dir("Econometrics"), "test/data/intRates.csv")
+    fname = joinpath(Pkg.dir("Econometrics"), "test/data/no_git_intRates.csv")
     writeTimedata(fname, intData)
 end

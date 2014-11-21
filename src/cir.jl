@@ -70,7 +70,7 @@ function cirNllh(da::DataArray, params::Array{Float64, 1},
 end
 
 function cirNllh(da::DataArray, cirMod::CIR, Δt::Float64 = 1)
-    return cirNllh(da, [getParams(cirMod)...], Δt = Δt)
+    return cirNllh(da, [getParams(cirMod)...], Δt)
 end
 
 function cirNllhx(da::DataArray, params::Array{Float64, 1},
@@ -100,7 +100,7 @@ function cirNllhx(da::DataArray, params::Array{Float64, 1},
 end
 
 function cirNllhx(da::DataArray, cirMod::CIR, Δt::Float64 = 1)
-    return cirNllhx(da, [getParams(cirMod)...], Δt = Δt)
+    return cirNllhx(da, [getParams(cirMod)...], Δt)
 end
 
 ####################
@@ -125,20 +125,61 @@ function cirOls(x::DataArray, Δt::Float64=1)
     return (α, μ, σ)
 end
 
+##############################
+## conditional distribution ##
+##############################
+
+function getCondDistr(cirMod::CIR, r0::Float64,  Δt::Float64=1.)
+    # conditional cdf given r
+    α, μ, σ = cirMod.alpha, cirMod.mu, cirMod.sigma
+
+    df = 4*α*μ/σ^2
+    c = 2*α/(σ^2*(1-exp(-α*Δt)))
+    λ = 2*c*r0*exp(-α*Δt)
+    return (df, λ, c)
+end
+
+function cdf(cirMod::CIR, x::Float64, r0::Float64, Δt::Float64=1.)
+    df, λ, c = getCondDistr(cirMod, r0, Δt)
+
+    return pnchisq(x*2*c, df, λ)
+end
+
+function cdf(cirMod::CIR, x::Array{Float64, 1}, Δt::Float64=1.)
+    ## take first value as given input
+    nObs = length(x)-1
+    condDistrParams = [getCondDistr(cirMod, x[ii], Δt) for ii=1:nObs]
+
+    u = zeros(nObs)
+    for ii=1:nObs
+        df, λ, c = condDistrParams[ii]
+        u[ii] = pnchisq(x[ii+1]*2*c, df, λ)
+    end
+
+    return u
+end
+
+function quantile(cirMod::CIR, q::Float64, r0::Float64, Δt::Float64=1.)
+    df, λ, c = getCondDistr(cirMod, r0, Δt)
+    
+    return qnchisq(q, df, λ)/(2*c)
+end
+
 ####################
 ## simulating CIR ##
 ####################
 
-function condcdf(cirMod::CIR, x::Float64, r::Float64,  Δt::Float64=1)
-    # conditional cdf given r
+function simulate(cirMod::CIR, r0::Float64, nObs::Int, Δt::Float64=1.)
+    α, μ, σ = cirMod.alpha, cirMod.mu, cirMod.sigma
 
+    df = 4*α*μ/σ^2 # constant 
+    c = 2*α/(σ^2*(1-exp(-α*Δt))) # constant for given Δt
 
+    vals = [r0; Array(Float64, nObs)]
+    for ii=1:nObs
+        # get conditional non-centrality
+        λ = 2*c*vals[ii]*exp(-α*Δt)
+        vals[ii+1] = rnchisq(df, λ)/(2*c)
+    end
+    return vals
 end
-function getC(cir::CIR)
-
-
-end
-
-##############################
-## conditional distribution ##
-##############################

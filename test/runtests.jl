@@ -7,6 +7,7 @@ using TimeData
 using Base.Test
 using EconDatasets
 using TimeData
+using Econometrics
 
 #######################################
 ## create input and output test data ##
@@ -22,7 +23,7 @@ Econometrics.createTestData()
 
 rscriptPath = joinpath(Pkg.dir("Econometrics"), "test/data/")
 
-## uncomment the following line if you don't have docker
+## comment the following line if you don't have docker
 #run(`docker run -t --rm -v $rscriptPath:/home/docker/ juliafinmetrix/rfinm_deb bash R CMD BATCH --no-save --no-restore r_results.R`)
 
 ## build MATLAB results
@@ -35,8 +36,8 @@ rscriptPath = joinpath(Pkg.dir("Econometrics"), "test/data/")
 ###############
 
 my_tests = ["cir.jl",
-            "returns.jl",
-            "nchisq.jl"]
+#            "nchisq.jl",
+            "returns.jl"]
 
 println("Running tests:")
 

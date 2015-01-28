@@ -71,7 +71,7 @@ with alias *rdock* and add it as remote ess process.
 
 
 Re-building docker
-p------------------
+-------------------
 
 In order to add additional packages into a docker image, add the
 package in *r_debian/Dockerfile* and re-built with *rdock_build*.

@@ -1,6 +1,7 @@
 module TestBsOptions
 
 using Distributions
+using Econometrics
 using Base.Test
 
 results = readcsv("/home/chris/research/julia/Econometrics/test/data/matlab_bsvals.csv")

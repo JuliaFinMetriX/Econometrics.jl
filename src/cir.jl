@@ -139,6 +139,7 @@ function getCondDistr(cirMod::CIR, r0::Float64,  Δt::Float64=1.)
     return (df, λ, c)
 end
 
+import Distributions.cdf
 function cdf(cirMod::CIR, x::Float64, r0::Float64, Δt::Float64=1.)
     df, λ, c = getCondDistr(cirMod, r0, Δt)
 

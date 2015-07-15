@@ -94,9 +94,10 @@ function implVolaCall(sigma0::Float64, P::Float64, S::Float64, K::Int, r::Float6
     maxIter = 1000
     
     # calculate deviation
+    stdNorm = Normal(0, 1)
     d1, d2 = bsDs(sigma0, S, K, r, T)
-    currVega = S*pdf(Normal(), d1)*sqrt(T)
-    currPrice = S*cdf(Normal(), d1) - K*exp(-r*T)*cdf(Normal(), d2)
+    currVega = S*pdf(stdNorm, d1)*sqrt(T)
+    currPrice = S*cdf(stdNorm, d1) - K*exp(-r*T)*cdf(stdNorm, d2)
     priceDiff = P - currPrice
 
     iterCounter = 0
@@ -106,8 +107,8 @@ function implVolaCall(sigma0::Float64, P::Float64, S::Float64, K::Int, r::Float6
         
         # new d1, d2, delta, price and deviation
         d1, d2 = bsDs(sigma0, S, K, r, T)
-        currVega = S*pdf(Normal(), d1)*sqrt(T)
-        currPrice = S*cdf(Normal(), d1) - K*exp(-r*T)*cdf(Normal(), d2)
+        currVega = S*pdf(stdNorm, d1)*sqrt(T)
+        currPrice = S*cdf(stdNorm, d1) - K*exp(-r*T)*cdf(stdNorm, d2)
         priceDiff = P - currPrice
         iterCounter += 1
     end

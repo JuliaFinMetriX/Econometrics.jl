@@ -114,3 +114,29 @@ function implVolaCall(sigma0::Float64, P::Float64, S::Float64, K::Int, r::Float6
     end
     return (sigma0, priceDiff, iterCounter)
 end
+
+function implVolaPut(sigma0::Float64, P::Float64, S::Float64, K::Int, r::Float64, T::Float64, prec::Float64)
+    # define maximum iteration size
+    maxIter = 1000
+    
+    # calculate deviation
+    stdNorm = Normal(0, 1)
+    d1, d2 = bsDs(sigma0, S, K, r, T)
+    currVega = S*pdf(stdNorm, d1)*sqrt(T)
+    currPrice = K*exp(-r*T)*cdf(stdNorm, -d2) - S*cdf(stdNorm, -d1)
+    priceDiff = P - currPrice
+
+    iterCounter = 0
+    while (abs(priceDiff) > prec) && (iterCounter < maxIter)
+        # Newton Raphson
+        sigma0 = sigma0 + priceDiff/currVega
+        
+        # new d1, d2, delta, price and deviation
+        d1, d2 = bsDs(sigma0, S, K, r, T)
+        currVega = S*pdf(stdNorm, d1)*sqrt(T)
+        currPrice = K*exp(-r*T)*cdf(stdNorm, -d2) - S*cdf(stdNorm, -d1)
+        priceDiff = P - currPrice
+        iterCounter += 1
+    end
+    return (sigma0, priceDiff, iterCounter)
+end

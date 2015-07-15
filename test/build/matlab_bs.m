@@ -15,15 +15,71 @@ sigmas = [0.4; 0.2; 0.2];
 %% calculate associated Black-Scholes call prices
 testResults = zeros(2, 3);
 
+testInd = 1;
+
 for ii=1:3
    [c, p] = blsprice(daxVals(ii), strikes(ii), r(ii), T(ii), sigmas(ii));
-   testResults(1, ii) = c;
-   testResults(2, ii) = p;
+   testResults(testInd, ii) = c;
+   testResults((testInd+1), ii) = p;
 end
+
+%% Greeks: 
+
+testInd = testInd + 2;
+
+% Delta
+for ii=1:3
+    [cVal, pVal] =  blsdelta(daxVals(ii), strikes(ii), r(ii), T(ii), sigmas(ii));
+    testResults(testInd, ii) = cVal;
+    testResults(testInd+1, ii) = pVal;
+end
+
+testInd = testInd + 2;
+
+% Gamma
+for ii=1:3
+    val =  blsgamma(daxVals(ii), strikes(ii), r(ii), T(ii), sigmas(ii));
+    testResults(testInd, ii) = val;
+end
+
+testInd = testInd + 1;
+
+% Vega
+for ii=1:3
+    val =  blsvega(daxVals(ii), strikes(ii), r(ii), T(ii), sigmas(ii));
+    testResults(testInd, ii) = val;
+end
+
+testInd = testInd + 1;
+
+% Theta
+for ii=1:3
+    [cVal, pVal] =  blstheta(daxVals(ii), strikes(ii), r(ii), T(ii), sigmas(ii));
+    testResults(testInd, ii) = cVal;
+    testResults(testInd+1, ii) = pVal;
+end
+
+testInd = testInd + 2;
+
+% Rho
+for ii=1:3
+    [cVal, pVal] =  blsrho(daxVals(ii), strikes(ii), r(ii), T(ii), sigmas(ii));
+    testResults(testInd, ii) = cVal;
+    testResults(testInd+1, ii) = pVal;
+end
+
 
 %% implied volatilities
 
+testInd = testInd + 2;
+
+% call, real data
 for ii=1:3
-    testResults(3, ii) = blsimpv(daxVals(ii), strikes(ii), r(ii), T(ii), callPrices(ii));
+    testResults(testInd, ii) = blsimpv(daxVals(ii), strikes(ii), r(ii), T(ii), callPrices(ii));
 end
 
+
+%% save to disk
+
+datName = '/home/chris/research/julia/Econometrics/test/data/matlab_bsvals.csv';
+csvwrite(datName, testResults);

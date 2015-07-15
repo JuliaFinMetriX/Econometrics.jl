@@ -1,4 +1,8 @@
 using Distributions
+using Base.Test
+
+results = readcsv("/home/chris/research/julia/Econometrics/test/data/matlab_bsvals.csv")
+
 include("/home/chris/research/julia/Econometrics/src/bsOptions.jl")
 
 callPrices = [26.7, 824.9, 1166.7]
@@ -16,14 +20,87 @@ sigmas = [0.4,
           0.2,
           0.2]
 
-bsPrices = [bsCall(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
+############
+## prices ##
+############
+
+actOut = [bsCall(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
             for ii=1:3]
 
+@test_approx_eq_eps actOut' results[1, :] 0.01
+
+actOut = [bsPut(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
+            for ii=1:3]
+
+@test_approx_eq_eps actOut' results[2, :] 0.01
+
+###########
+## Delta ##
+###########
+
+actOut = [bsDeltaCall(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
+          for ii=1:3]
+
+@test_approx_eq_eps actOut' results[3, :] 0.01
+
+actOut = [bsDeltaPut(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
+          for ii=1:3]
+
+@test_approx_eq_eps actOut' results[4, :] 0.01
+
+###########
+## Gamma ##
+###########
+
+actOut = [bsGamma(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
+          for ii=1:3]
+
+@test_approx_eq_eps actOut' results[5, :] 0.01
+
+##########
+## Vega ##
+##########
+
+actOut = [bsVega(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
+          for ii=1:3]
+
+@test_approx_eq_eps actOut' results[6, :] 0.01
+
+###########
+## Theta ##
+###########
+
+actOut = [bsThetaCall(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
+          for ii=1:3]
+
+@test_approx_eq_eps actOut' results[7, :] 0.1
+
+actOut = [bsThetaPut(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
+          for ii=1:3]
+
+@test_approx_eq_eps actOut' results[8, :] 0.1
+
+#########
+## Rho ##
+#########
+
+actOut = [bsRhoCall(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
+          for ii=1:3]
+
+@test_approx_eq_eps actOut' results[9, :] 0.1
+
+actOut = [bsRhoPut(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
+          for ii=1:3]
+
+@test_approx_eq_eps actOut' results[10, :] 0.01
+
+##################
+## Implied vola ##
+##################
 
 sigma0 = 0.1
 prec = 0.000001
 
-volas =[implVolaCall(sigma0, callPrices[ii], daxVals[ii],
-                     strikes[ii], r[ii],
-                     T[ii], prec) for ii=1:3]
+volas = [implVolaCall(sigma0, callPrices[ii], daxVals[ii],
+                     strikes[ii], r[ii], T[ii], prec) for ii=1:3]
 

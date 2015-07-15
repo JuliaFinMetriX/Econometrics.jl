@@ -37,6 +37,7 @@ rscriptPath = joinpath(Pkg.dir("Econometrics"), "test/data/")
 
 my_tests = ["cir.jl",
 #            "nchisq.jl",
+            "bsOptions_test.jl",
             "returns.jl"]
 
 println("Running tests:")

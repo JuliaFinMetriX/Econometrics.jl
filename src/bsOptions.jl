@@ -90,26 +90,26 @@ end
 ########################
 
 function implVolaCall(sigma0::Float64, P::Float64, S::Float64, K::Int, r::Float64, T::Float64, prec::Float64)
-    # define maximum interation size
+    # define maximum iteration size
     maxIter = 1000
     
     # calculate deviation
     d1, d2 = bsDs(sigma0, S, K, r, T)
-    currDelta = cdf(Normal(), d1)
-    currPrice = S*currDelta - K*exp(-r*T)*cdf(Normal(), d2)
-    dev = P - currPrice
-    
+    currVega = S*pdf(Normal(), d1)*sqrt(T)
+    currPrice = S*cdf(Normal(), d1) - K*exp(-r*T)*cdf(Normal(), d2)
+    priceDiff = P - currPrice
+
     iterCounter = 0
-    while (dev > prec) && (iterCounter < maxIter)
+    while (abs(priceDiff) > prec) && (iterCounter < maxIter)
         # Newton Raphson
-        sigma0 = sigma0 - currPrice/currDelta
+        sigma0 = sigma0 + priceDiff/currVega
         
         # new d1, d2, delta, price and deviation
         d1, d2 = bsDs(sigma0, S, K, r, T)
-        currDelta = cdf(Normal(), d1)
-        currPrice = S*currDelta - K*exp(-r*T)*cdf(Normal(), d2)
-        dev = P - currPrice
+        currVega = S*pdf(Normal(), d1)*sqrt(T)
+        currPrice = S*cdf(Normal(), d1) - K*exp(-r*T)*cdf(Normal(), d2)
+        priceDiff = P - currPrice
         iterCounter += 1
     end
-    return (sigma0, dev, iterCounter)
+    return (sigma0, priceDiff, iterCounter)
 end

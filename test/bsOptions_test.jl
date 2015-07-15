@@ -1,3 +1,5 @@
+module TestBsOptions
+
 using Distributions
 using Base.Test
 
@@ -98,9 +100,12 @@ actOut = [bsRhoPut(sigmas[ii], daxVals[ii], strikes[ii], r[ii], T[ii])
 ## Implied vola ##
 ##################
 
-sigma0 = 0.1
+sigma0 = 0.18
 prec = 0.000001
 
-volas = [implVolaCall(sigma0, callPrices[ii], daxVals[ii],
-                     strikes[ii], r[ii], T[ii], prec) for ii=1:3]
+volas = [implVolaCall(sigma0, callPrices[kk], daxVals[kk],
+                     strikes[kk], r[kk], T[kk], prec)[1] for kk=1:3]
 
+@test_approx_eq_eps volas' results[11, :] 0.01
+
+end

@@ -6,6 +6,7 @@ using DataFrames
 using Dates
 using GLM
 using EconDatasets
+using Distributions
 ## using Winston
 ## using NLopt
 
@@ -36,5 +37,6 @@ include("copula.jl")
 include("returns.jl")
 include("nchisq.jl")
 include("utils.jl")
+include("bsOptions.jl")
 
 end # module

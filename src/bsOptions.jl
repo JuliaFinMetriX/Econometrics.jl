@@ -89,6 +89,17 @@ end
 ## Implied volatility ##
 ########################
 
+function implVola(sigma0::Float64, P::Float64, S::Float64, K::Int,
+                  r::Float64, T::Float64, prec::Float64, isCall::Bool)
+    iv = []
+    if isCall
+        iv = implVolaCall(sigma0, P, S, K, r, T, prec)
+    else
+        iv = implVolaPut(sigma0, P, S, K, r, T, prec)
+    end
+    return iv
+end
+
 function implVolaCall(sigma0::Float64, P::Float64, S::Float64, K::Int, r::Float64, T::Float64, prec::Float64)
     # define maximum iteration size
     maxIter = 1000

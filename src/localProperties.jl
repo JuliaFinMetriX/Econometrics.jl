@@ -76,7 +76,8 @@ function plotLocalProperties(df::DataFrame, xCol::Symbol,
                              yEdges::Array{Float64, 1},
                              aggrFunc::Function;
                              xlab = string(xCol),
-                             ylab = string(yCol))
+                             ylab = string(yCol),
+                             ttl = "")
 
     res = localAppl(df, xCol, yCol, xEdges, yEdges, aggrFunc)
 
@@ -90,12 +91,13 @@ function plotLocalProperties(df::DataFrame, xCol::Symbol,
 
     currPlot = Gadfly.plot(res, x=xCol, y=yCol, color=:value, Geom.rectbin,
                            Scale.x_continuous(labels=x ->
-                           @sprintf("%2.3f", xInd2Range(x)),
+                           @sprintf("%2.2f", xInd2Range(x)),
                                               minvalue=0, maxvalue=xMax),
                            Scale.y_continuous(labels=x ->
-                           @sprintf("%2.3f", yInd2Range(x)),
+                           @sprintf("%2.2f", yInd2Range(x)),
                                               minvalue=0, maxvalue=yMax),
                            Guide.xlabel(xlab),
-                           Guide.ylabel(ylab))
+                           Guide.ylabel(ylab),
+                           Guide.title(ttl))
     return currPlot
 end

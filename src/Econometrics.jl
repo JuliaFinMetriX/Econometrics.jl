@@ -3,10 +3,12 @@ module Econometrics
 ## list packages whos namespace is used
 using TimeData
 using DataFrames
+using Docile
 using Dates
 using GLM
 using EconDatasets
 using Distributions
+using Gadfly
 ## using Winston
 ## using NLopt
 
@@ -35,7 +37,9 @@ implVola,
 implVolaCall,
 implVolaPut,
 imputePreviousObs!,
+localAppl,
 log2disc,
+plotLocalProperties,
 price2ret,
 ranks,
 ret2price
@@ -47,6 +51,7 @@ ret2price
 ## include("autocorr.jl")
 ## include("garch.jl")
 include("bsOptions.jl")
+include("localProperties.jl")
 include("cir.jl")
 include("copula.jl")
 include("returns.jl")

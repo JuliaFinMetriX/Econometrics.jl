@@ -10,13 +10,15 @@ using EconDatasets
 using Distributions
 using Gadfly
 ## using Winston
-## using NLopt
+using NLopt
+using JuMP
 
 ## required for testing
 ## using MAT
 
 export                                  # important functions
 CIR,
+TLSDist,
 bsDs,
 bsCall,
 bsPut,
@@ -32,6 +34,7 @@ cirOls,
 cirNllh,
 cirNllhx,
 disc2log,
+fit,
 getParams,
 implVola,
 implVolaCall,
@@ -57,6 +60,7 @@ include("copula.jl")
 include("returns.jl")
 include("nchisq.jl")
 include("utils.jl")
+include("t_loc_scale.jl")
 
 
 end # module

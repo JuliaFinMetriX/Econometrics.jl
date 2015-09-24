@@ -1,5 +1,3 @@
-using NLopt
-
 immutable TLSDist <: ContinuousUnivariateDistribution
     ν::Float64
     μ::Float64

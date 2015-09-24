@@ -37,13 +37,13 @@ end
 ##----
 
 function pdf(tls::TLSDist, x::Float64)
-    nu, mu, a = params(tls)
+    nu, mu, a = getParams(tls)
     t = TDist(nu)
     return 1/a * pdf(t, (x - mu)/a)
 end
 
 function pdf(tls::TLSDist, x::Array{Float64, 1})
-    nu, mu, a = params(tls)
+    nu, mu, a = getParams(tls)
     t = TDist(nu)
     return 1/a * pdf(t, (x .- mu)/a)
 end
@@ -112,7 +112,6 @@ function fit(dt::Type{TLSDist}, data::Array{Float64, 1})
     initMu = mean(data)
     initA = std(data)/sqrt(initNu/(initNu-2))
     initParams = [initNu, initMu, initA]
-    display(initParams)
 
     (minf, minx, ret) = optimize(opt, initParams)
     return minx

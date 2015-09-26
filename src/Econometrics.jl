@@ -21,8 +21,12 @@ AbstrModel,
 AbstrMultivarModel,
 AbstrUnivarModel,
 CIR,
+GARCH_1_1,
+GARCH_1_1_Fit,
 NChiSq,
+NormIID,
 TLSDist,
+TlsIID,
 bsDs,
 bsCall,
 bsPut,
@@ -61,6 +65,8 @@ include("distributions/nchisq.jl")
 
 ## models
 include("models/Model.jl")
+include("models/normiid.jl")
+include("models/tlsiid.jl")
 include("models/garch_types.jl")
 include("models/garch.jl")
 include("models/cir.jl")

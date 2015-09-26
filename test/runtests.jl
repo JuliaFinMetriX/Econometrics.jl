@@ -38,9 +38,13 @@ using Econometrics
 my_tests = [
             ## distributions
             "t_loc_scale_test.jl",
-            "nchisq_test.jl"
+            "nchisq_test.jl",
 
             ## models
+            "model_test.jl",
+            "normiid_test.jl",
+            "tlsiid_test.jl",
+            "garch_test.jl"
             ## "cir.jl",
 
             ## miscellaneous

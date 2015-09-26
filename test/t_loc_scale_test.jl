@@ -33,7 +33,6 @@ tls = Econometrics.TLSDist([3.2, 0.2, 1.2])
 
 @test Econometrics.getParams(tls) == (3.2, 0.2, 1.2)
 
-
 ## rand
 ##-----
 

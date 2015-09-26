@@ -47,3 +47,28 @@ More precisely, the following concrete models are implemented:
 - `GARCH_1_1{t} <: AbstrUnivarModel`
 	- GARCH(1,1) with t-distributed returns
 
+# Distributions
+
+The implementation of new distributions should resemble the structure
+of the `Distributions.jl` package. They should be included into the
+`Distributions.jl` type hierarchy as well as provide the following
+common interface:
+
+- `pdf`
+- `cdf`
+- `quantile`
+- `rand`
+- `names`
+- `logpdf`
+- `loglikelihood`
+- `std`
+- `dof`
+- `fit`: in contrast to `Model` types but in line with
+  `Distributions.jl` function `fit` returns a fitted distribution of
+  respective type but without additional information like data,...
+- Note: instead of `params` I usually use `getParams`
+
+The following concrete distributions are implemented:
+
+- `TLSDist`: t-location-scale distribution
+- `NChiSq`: noncentral chi-squared distribution

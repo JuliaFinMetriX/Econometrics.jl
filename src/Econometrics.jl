@@ -17,7 +17,11 @@ using JuMP
 ## using MAT
 
 export                                  # important functions
+AbstrModel,
+AbstrMultivarModel,
+AbstrUnivarModel,
 CIR,
+NChiSq,
 TLSDist,
 bsDs,
 bsCall,
@@ -51,16 +55,22 @@ ret2price
 ## ranks,
 ## plot
 
-## include("autocorr.jl")
-## include("garch.jl")
+## distributions
+include("distributions/t_loc_scale.jl")
+include("distributions/nchisq.jl")
+
+## models
+include("models/Model.jl")
+include("models/garch_types.jl")
+include("models/garch.jl")
+include("models/cir.jl")
+
+## miscellaneous
 include("bsOptions.jl")
 include("localProperties.jl")
-include("cir.jl")
 include("copula.jl")
 include("returns.jl")
-include("nchisq.jl")
 include("utils.jl")
-include("t_loc_scale.jl")
-
+include("autocorr.jl")
 
 end # module

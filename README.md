@@ -1,6 +1,6 @@
 # Econometrics
 
-[![Build Status](https://travis-ci.org/cgroll/Econometrics.jl.png)](https://travis-ci.org/cgroll/Econometrics.jl)
+[![Build Status](https://travis-ci.org/JuliaFinMetriX/Econometrics.jl.svg?branch=master)](https://travis-ci.org/JuliaFinMetriX/Econometrics.jl)
 
 The Econometrics.jl package contains functionalities for (financial)
 econometric research. It comprises:

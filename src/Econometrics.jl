@@ -1,3 +1,5 @@
+using Distributions
+
 module Econometrics
 
 ## list packages whos namespace is used
@@ -42,6 +44,7 @@ cirOls,
 cirNllh,
 cirNllhx,
 disc2log,
+estimate,
 fit,
 getParams,
 implVola,

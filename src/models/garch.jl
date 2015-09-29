@@ -24,7 +24,8 @@
 import Base.Multimedia.display
 function display(gMod::GARCH_1_1{Normal})
     nDigits = 3
-    println("\nUnivariate GARCH(1,1), εₜ~N(0,1): ")
+    typNam = string(typeof(gMod))
+    println("\n$typNam :: Univariate GARCH(1,1), εₜ~N(0,1)")
     println("    μ: $(round(gMod.μ, nDigits))")
     println("    ĸ: $(round(gMod.κ, nDigits))")
     println("    α: $(round(gMod.α, nDigits))")
@@ -36,8 +37,9 @@ end
 
 function display(gMod::GARCH_1_1{TDist})
     nDigits = 3
+    typNam = string(typeof(gMod))
     nuVal = round(dof(gMod.distr), nDigits)
-    println("\nUnivariate GARCH(1,1), εₜ~t($nuVal): ")
+    println("\n$typNam :: Univariate GARCH(1,1), εₜ~t($nuVal)")
     println("    μ: $(round(gMod.μ, nDigits))")
     println("    ĸ: $(round(gMod.κ, nDigits))")
     println("    α: $(round(gMod.α, nDigits))")
@@ -49,6 +51,8 @@ end
 
 function display(gModFit::GARCH_1_1_Fit)
     nDigits = 3
+    typNam = string(typeof(gModFit))
+    println("\n$typNam with model:")
     display(gModFit.model)
     println("    data: $(typeof(gModFit.data))")
     println("  sigmas: $(typeof(gModFit.sigmas))")
@@ -185,6 +189,10 @@ Negative log-likelihood of GARCH(1,1) with t distributed innovations.
 function garch_t_nllh(params::Array{Float64, 1},
                       data::Array{Float64, 1})
     μ, κ, α, β, ν, σ0 = params
+    if isnan(ν)
+        warn("\nν is NaN")
+        return NaN
+    end
     nObs = length(data)
     
     ## get sigmas
@@ -327,4 +335,105 @@ function fit(dt::Type{GARCH_1_1{TDist}}, data::Array{Float64, 1})
     garchMod = GARCH_1_1(μ, κ, α, β, TDist(ν))
     
     return GARCH_1_1_Fit(garchMod, data, sigmas, nllh)
+end
+
+## fit with Timenum / Timematr
+##----------------------------
+
+function fit(dt::Type{GARCH_1_1{Normal}}, tn::AbstractTimematr)
+    nObs, nAss = size(tn)
+
+    if nAss != 1
+        error("Original data must be univariate for univariate models.")
+    end
+    
+    ## extract data
+    data = asArr(tn[1], Float64)
+
+    gFit = fit(dt, data)
+
+    ## determine name for sigma column
+    colName = symbol(string(names(tn.vals)[1], "_sigmas"))
+    
+    sigmasTm = Timematr(gFit.sigmas, [colName], idx(tn))
+
+    return GARCH_1_1_Fit(gFit.model, tn, sigmasTm, gFit.nllh)
+end
+
+function fit(dt::Type{GARCH_1_1{TDist}}, tn::AbstractTimematr)
+    nObs, nAss = size(tn)
+
+    if nAss != 1
+        error("Original data must be univariate for univariate models.")
+    end
+    
+    ## extract data
+    data = asArr(tn[1], Float64)
+
+    gFit = fit(dt, data)
+
+    ## determine name for sigma column
+    colName = symbol(string(names(tn.vals)[1], "_sigmas"))
+    
+    sigmasTm = Timematr(gFit.sigmas, [colName], idx(tn))
+
+    return GARCH_1_1_Fit(gFit.model, tn, sigmasTm, gFit.nllh)
+end
+
+function fit(dt::Type{GARCH_1_1{Normal}}, tn::AbstractTimenum)
+    nObs, nAss = size(tn)
+
+    if nAss != 1
+        error("Original data must be univariate for univariate models.")
+    end
+    
+    ## extract data
+    data = asArr(tn[1], Float64, NaN)[:]
+
+    gFit = fit(dt, data[!isnan(data), 1])
+
+    ## fill sigmas
+    noNAInds = !isna(tn.vals[1])
+    sigmas = DataArray(Float64, nObs)
+    sigmas[noNAInds] = gFit.sigmas
+
+    sigmasDf = DataFrame()
+    sigmasDf[1] = sigmas
+
+    ## determine name for sigma column
+    colName = symbol(string(names(tn.vals)[1], "_sigmas"))
+    rename!(sigmasDf, :x1, colName)
+    
+    sigmasTn = Timenum(sigmasDf, idx(tn))
+
+    return GARCH_1_1_Fit(gFit.model, tn, sigmasTn, gFit.nllh)
+end
+
+function fit(dt::Type{GARCH_1_1{TDist}}, tn::AbstractTimenum)
+    nObs, nAss = size(tn)
+
+    if nAss != 1
+        error("Original data must be univariate for univariate models.")
+    end
+    
+    ## extract data
+    data = asArr(tn[1], Float64, NaN)[:]
+
+    gFit = fit(dt, data[!isnan(data), 1])
+
+    ## fill sigmas
+    noNAInds = !isna(tn.vals[1])
+    sigmas = DataArray(Float64, nObs)
+    sigmas[noNAInds] = gFit.sigmas
+
+    sigmasDf = DataFrame()
+    sigmasDf[1] = sigmas
+
+    ## determine name for sigma column
+    colName = symbol(string(names(tn.vals)[1], "_sigmas"))
+    rename!(sigmasDf, :x1, colName)
+    
+    sigmasTn = Timenum(sigmasDf, idx(tn))
+
+    return GARCH_1_1_Fit(gFit.model, tn, sigmasTn, gFit.nllh)
 end

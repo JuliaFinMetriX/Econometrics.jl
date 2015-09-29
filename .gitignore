@@ -1,2 +1,5 @@
+*.*~
 /test/data/intRates.csv
 /test/data/no_git_intRates.csv
+/src/localProperties.jl~
+/test/localProperties_test.jl~

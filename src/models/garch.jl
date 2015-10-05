@@ -190,7 +190,7 @@ function garch_t_nllh(params::Array{Float64, 1},
                       data::Array{Float64, 1})
     μ, κ, α, β, ν, σ0 = params
     if isnan(ν)
-        warn("\nν is NaN")
+        ## warn("\nν is NaN")
         return NaN
     end
     nObs = length(data)

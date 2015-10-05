@@ -348,7 +348,7 @@ function fit(dt::Type{GARCH_1_1{Normal}}, tn::AbstractTimematr)
     end
     
     ## extract data
-    data = asArr(tn[1], Float64)
+    data = asArr(tn[1], Float64)[:]
 
     gFit = fit(dt, data)
 
@@ -368,7 +368,7 @@ function fit(dt::Type{GARCH_1_1{TDist}}, tn::AbstractTimematr)
     end
     
     ## extract data
-    data = asArr(tn[1], Float64)
+    data = asArr(tn[1], Float64)[:]
 
     gFit = fit(dt, data)
 

@@ -190,7 +190,7 @@ function garch_t_nllh(params::Array{Float64, 1},
                       data::Array{Float64, 1})
     μ, κ, α, β, ν, σ0 = params
     if isnan(ν)
-        warn("\nν is NaN")
+        ## warn("\nν is NaN")
         return NaN
     end
     nObs = length(data)
@@ -348,7 +348,7 @@ function fit(dt::Type{GARCH_1_1{Normal}}, tn::AbstractTimematr)
     end
     
     ## extract data
-    data = asArr(tn[1], Float64)
+    data = asArr(tn[1], Float64)[:]
 
     gFit = fit(dt, data)
 
